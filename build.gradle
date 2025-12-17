@@ -1,0 +1,115 @@
+// Root build file for multi-module project
+
+plugins {
+    id 'base'
+    id 'org.jreleaser' version '1.12.0'
+}
+
+allprojects {
+    group = 'io.github.ramils'
+    version = '0.1.0'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    if (name.startsWith('test-data-builder')) {
+        apply plugin: 'java-library'
+        apply plugin: 'checkstyle'
+        apply plugin: 'maven-publish'
+
+        java {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+            withSourcesJar()
+            withJavadocJar()
+        }
+
+        dependencies {
+            testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+            testImplementation 'org.assertj:assertj-core:3.25.3'
+            testImplementation 'org.mockito:mockito-core:5.11.0'
+        }
+
+        tasks.withType(Javadoc).configureEach {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+
+        test {
+            useJUnitPlatform()
+            testLogging {
+                events "passed", "skipped", "failed"
+                exceptionFormat "full"
+                showStandardStreams = true
+            }
+        }
+
+        checkstyle {
+            toolVersion = '12.3.0'
+            configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+            maxWarnings = 0
+            maxErrors = 0
+        }
+
+        tasks.withType(Checkstyle) {
+            reports {
+                xml.required = true
+                html.required = true
+            }
+        }
+
+        checkstyleTest.enabled = false
+
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+
+                    groupId = project.group
+                    artifactId = project.name
+                    version = project.version
+
+                    pom {
+                        name.set(project.name)
+                        description.set('Fluent, type-safe test data builder for Spring Boot applications')
+                        url.set('https://github.com/ramilS/spring-boot-test-data-builder')
+
+                        licenses {
+                            license {
+                                name.set('MIT License')
+                                url.set('https://opensource.org/licenses/MIT')
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id.set('ramilS')
+                                name.set('Ramil')
+                                url.set('https://github.com/ramilS')
+                            }
+                        }
+
+                        scm {
+                            url.set('https://github.com/ramilS/spring-boot-test-data-builder')
+                            connection.set('scm:git:git://github.com/ramilS/spring-boot-test-data-builder.git')
+                            developerConnection.set('scm:git:ssh://git@github.com/ramilS/spring-boot-test-data-builder.git')
+                        }
+                    }
+                }
+            }
+
+            repositories {
+                maven {
+                    name = 'staging'
+                    url = uri("${rootProject.buildDir}/staging-deploy")
+                }
+            }
+        }
+    }
+}
+
+jreleaser {
+    configFile = 'jreleaser.yml'
+}

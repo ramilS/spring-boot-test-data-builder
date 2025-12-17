@@ -1,0 +1,12 @@
+description = 'Test Data Builder - Core module with common interfaces and utilities'
+
+dependencies {
+    // Bean Validation API (optional - for constraint annotations)
+    compileOnly 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+    // Regex to String generation
+    implementation 'dk.brics:automaton:1.12-4'
+
+    // Testing
+    testImplementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+}

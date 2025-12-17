@@ -1,0 +1,30 @@
+project:
+  name: test-data-builder
+  description: Fluent, type-safe test data builder for Spring Boot applications
+  website: https://github.com/ramilS/spring-boot-test-data-builder
+  authors:
+    - Ramil
+  license: MIT
+  copyright: 2026 Ramil
+  versionPattern: SEMVER
+
+signing:
+  active: ALWAYS
+  armored: true
+
+release:
+  github:
+    owner: ramilS
+    name: spring-boot-test-data-builder
+    skipRelease: true
+    skipTag: true
+    token: DO_NOT_USE
+
+deploy:
+  maven:
+    mavenCentral:
+      sonatype:
+        active: ALWAYS
+        url: https://central.sonatype.com/api/v1/publisher
+        stagingRepositories:
+          - build/staging-deploy

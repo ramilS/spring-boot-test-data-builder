@@ -1,0 +1,10 @@
+rootProject.name = 'test-data-builder'
+
+include 'test-data-builder-core'
+include 'test-data-builder-jpa'
+include 'test-data-builder-spring-data-jdbc'
+include 'test-data-builder-spring-boot-starter'
+include 'example:jpa-example'
+include 'example:jdbc-example'
+include 'example:jpa-spock-example'
+include 'example:jpa-spring-boot-2-example'
