@@ -1,0 +1,124 @@
+// Root build file for multi-module project
+
+allprojects {
+    group = 'io.github.ramils'
+    version = '0.1.0'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    // Skip example projects - they have their own build config
+    if (name.startsWith('test-data-builder')) {
+        apply plugin: 'java-library'
+        apply plugin: 'maven-publish'
+        apply plugin: 'signing'
+        apply plugin: 'checkstyle'
+
+        java {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+            withJavadocJar()
+            withSourcesJar()
+        }
+
+        dependencies {
+            testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+            testImplementation 'org.assertj:assertj-core:3.25.3'
+            testImplementation 'org.mockito:mockito-core:5.11.0'
+        }
+
+        tasks.withType(Javadoc).configureEach {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+
+        test {
+            useJUnitPlatform()
+            testLogging {
+                events "passed", "skipped", "failed"
+                exceptionFormat "full"
+                showStandardStreams = true
+            }
+        }
+
+        checkstyle {
+            toolVersion = '12.3.0'
+            configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+            maxWarnings = 0
+            maxErrors = 0
+        }
+
+        tasks.withType(Checkstyle) {
+            reports {
+                xml.required = true
+                html.required = true
+            }
+        }
+
+        checkstyleTest.enabled = false
+
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+                    artifactId = project.name
+
+                    pom {
+                        name = project.name
+                        description = 'Fluent, type-safe test data builder for Spring Boot applications'
+                        url = 'https://github.com/ramilS/spring-boot-test-data-builder'
+
+                        licenses {
+                            license {
+                                name = 'MIT License'
+                                url = 'https://opensource.org/licenses/MIT'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = 'ramilS'
+                                name = 'Ramil'
+                                url = 'https://github.com/ramilS'
+                            }
+                        }
+
+                        scm {
+                            url = 'https://github.com/ramilS/spring-boot-test-data-builder'
+                            connection = 'scm:git:git://github.com/ramilS/spring-boot-test-data-builder.git'
+                            developerConnection = 'scm:git:ssh://git@github.com/ramilS/spring-boot-test-data-builder.git'
+                        }
+                    }
+                }
+            }
+
+            repositories {
+                maven {
+                    name = 'central'
+                    url = 'https://central.sonatype.com/api/v1/publisher/deployments/download/'
+
+                    credentials {
+                        username = findProperty('sonatypeUsername') ?: System.getenv('SONATYPE_USERNAME') ?: ''
+                        password = findProperty('sonatypePassword') ?: System.getenv('SONATYPE_PASSWORD') ?: ''
+                    }
+                }
+            }
+        }
+
+        signing {
+            def signingKey = findProperty('signingKey') ?: System.getenv('GPG_PRIVATE_KEY')
+            def signingPassword = findProperty('signingPassword') ?: System.getenv('GPG_PASSPHRASE')
+            if (signingKey && signingPassword) {
+                useInMemoryPgpKeys(signingKey, signingPassword)
+            }
+            sign publishing.publications.mavenJava
+        }
+
+        // Don't fail build if signing is not configured (local development)
+        tasks.withType(Sign).configureEach {
+            onlyIf { project.hasProperty('signingKey') || System.getenv('GPG_SIGNING_KEY') }
+        }
+    }
+}

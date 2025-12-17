@@ -1,0 +1,18 @@
+description = 'Test Data Builder - Spring Data JDBC support module'
+
+dependencies {
+    api project(':test-data-builder-core')
+
+    // Spring Data JDBC
+    compileOnly 'org.springframework.data:spring-data-jdbc:3.4.2'
+
+    // Bean Validation
+    compileOnly 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+    // Testing
+    testImplementation 'org.springframework.data:spring-data-jdbc:3.4.2'
+    testImplementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    testImplementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+    testImplementation 'org.glassfish.expressly:expressly:5.0.0'
+    testImplementation 'com.h2database:h2:2.2.224'
+}
