@@ -1,0 +1,42 @@
+plugins {
+    id 'groovy'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'jakarta.validation:jakarta.validation-api'
+
+    runtimeOnly 'com.h2database:h2'
+
+    // Test Data Builder
+    testImplementation project(':test-data-builder-jpa')
+
+    // Spock Framework
+    testImplementation 'org.spockframework:spock-core:2.4-M4-groovy-4.0'
+    testImplementation 'org.spockframework:spock-spring:2.4-M4-groovy-4.0'
+    testImplementation 'org.apache.groovy:groovy:4.0.15'
+
+    // Spring Boot Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+bootJar {
+    enabled = false
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

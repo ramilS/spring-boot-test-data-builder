@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <suppress checks="FileLength" files="EntityBuilder\.java"/>
+    <suppress checks="FileLength" files="JpaMetadataProvider\.java"/>
+
+    <!-- Test classes can have longer methods and more flexibility -->
+    <suppress checks="MethodLength" files=".*Test\.java"/>
+    <suppress checks="FileLength" files=".*Test\.java"/>
+
+    <!-- Test entities don't need utility class constructors hidden -->
+    <suppress checks="HideUtilityClassConstructor" files=".*/scenarios/entities/.*\.java"/>
+</suppressions>

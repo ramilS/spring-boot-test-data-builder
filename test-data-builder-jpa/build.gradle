@@ -1,0 +1,19 @@
+description = 'Test Data Builder - JPA support module'
+
+dependencies {
+    api project(':test-data-builder-core')
+
+    // JPA API
+    compileOnly 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+    // Bean Validation
+    compileOnly 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+    // Testing
+    testImplementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    testImplementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    testImplementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+    testImplementation 'org.glassfish.expressly:expressly:5.0.0'
+    testImplementation 'org.hibernate.orm:hibernate-core:6.4.4.Final'
+    testImplementation 'com.h2database:h2:2.2.224'
+}
